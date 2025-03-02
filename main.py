@@ -5,68 +5,50 @@ app = Flask(__name__)
 
 global data
 
-# read data from file and store in global variable data
+
 with open('data.json') as f:
     data = json.load(f)
 
 
-@app.route('/')
-def hello_world():
-    return 'Hello, Welcome to  my INFO 2602 Lab 1!' 
 
-#-----------------------------------------------------------------------------------------------
-#This is the first function version:
-#@app.route('/students')
-#def get_students():
-#    return jsonify(data)# return student data in response
 
-#This is the second function version:
-#@app.route('/students/<id>')
-#def get_student(id):
-#  for student in data: 
-#    if student['id'] == id: # filter out the students without the specified id
-#      return jsonify(student)
-#-----------------------------------------------------------------------------------------------
-
-#Final function version:
 @app.route('/students')
 def get_students():
   result = []
-  pref = request.args.get('pref') # get the parameter from url
+  pref = request.args.get('pref') 
   if pref:
-    for student in data: # iterate dataset
-      if student['pref'] == pref: # select only the students with a given meal preference
-        result.append(student) # add match student to the result
-    return jsonify(result) # return filtered set if parameter is supplied
-  return jsonify(data) # return entire dataset if no parameter supplied
+    for student in data: 
+      if student['pref'] == pref: 
+        result.append(student) 
+    return jsonify(result)
+  return jsonify(data)
 
-#Exercise 1:
+
 @app.route('/stats')
 def get_stats():
     meal_preferences = {}
     programmes = {}
 
     for student in data:
-        # Count meal preferences
+        
         meal_pref = student.get('pref')
         if meal_pref:
             meal_preferences[meal_pref] = meal_preferences.get(meal_pref, 0) + 1
 
-        # Count programmes
+        
         programme = student.get('programme')
         if programme:
             programmes[programme] = programmes.get(programme, 0) + 1
 
-    # Combine results into a single response
+   
     stats = {
         'meal_preferences': meal_preferences,
         'programmes': programmes
     }
 
-    return jsonify(stats)  # Returns a JSON response
+    return jsonify(stats)  
 
-#Exercise 2:
-#In the URL, put it as http://<port>/<operation/<num1>/<num2>
+
 @app.route('/add/<int:a>/<int:b>')
 def add(a, b):
     result = a + b
